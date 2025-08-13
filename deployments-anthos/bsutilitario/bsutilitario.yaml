@@ -1,0 +1,67 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: "bsutilitario"
+  name: "bsutilitario"
+  namespace: "foh"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "bsutilitario"
+  template:
+    metadata:
+      labels:
+        app: "bsutilitario"
+    spec:
+      containers:
+      - env:
+        - name: "ENV"
+          value: "dev"
+        - name: "deployname"
+          valueFrom:
+            configMapKeyRef:
+              key: "config_key"
+              name: "config-bsutilitario_config"
+        - name: "mi-secret"
+          valueFrom:
+            secretKeyRef:
+              key: "secret_key"
+              name: "secret-SECRET_VAR"
+        - name: "RABBITMQ_TRANSACTION_HOST"
+          valueFrom:
+            secretKeyRef:
+              key: "secret-rabbit"
+              name: "RABBITMQ_TRANSACTION_HOST"
+        - name: "RABBITMQ_TRANSACTION_PORT"
+          valueFrom:
+            secretKeyRef:
+              key: "secret-rabbit"
+              name: "RABBITMQ_TRANSACTION_PORT"
+        - name: "RABBITMQ_TRANSACTION_USR"
+          valueFrom:
+            secretKeyRef:
+              key: "secret-rabbit"
+              name: "RABBITMQ_TRANSACTION_USR"
+        - name: "RABBITMQ_TRANSACTION_PWD"
+          valueFrom:
+            secretKeyRef:
+              key: "secret-rabbit"
+              name: "RABBITMQ_TRANSACTION_PWD"
+        image: "us-central1-docker.pkg.dev/foh-anthos-sandbox/foh-docker-dev/bsutilitario:latest"
+        name: "bsutilitario"
+        ports:
+        - containerPort: 8080
+          protocol: "TCP"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+          requests:
+            cpu: "10m"
+            memory: "10Mi"
+      imagePullSecrets:
+      - name: "registry-secret"
+      restartPolicy: "Always"
