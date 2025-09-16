@@ -1,0 +1,87 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: "batchcargajumio"
+  name: "batchcargajumio"
+  namespace: "foh"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "batchcargajumio"
+  template:
+    metadata:
+      labels:
+        app: "batchcargajumio"
+    spec:
+      containers:
+      - env:
+        - name: "ENV"
+          value: "prod"
+        - name: "PORT"
+          value: "8080"
+        - name: "BASE_LOGS"
+          value: "/logs"
+        - name: "LOG_LEVEL_SERVICE"
+          value: "INFO"
+        - name: "LOG_OUTPUT_SERVICE"
+          value: "AMQP"
+        - name: "DS_FUCDPRD_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "DS_FUCDPRD_URL"
+              name: "config-batchcargajumio"
+        - name: "MSBATCH_USR"
+          valueFrom:
+            secretKeyRef:
+              key: "MSBATCH_USR"
+              name: "secret-batchcargajumio"
+        - name: "MSBATCH_PWD"
+          valueFrom:
+            secretKeyRef:
+              key: "MSBATCH_PWD"
+              name: "secret-batchcargajumio"
+        - name: "RABBITMQ_TRANSACTION_HOST"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_HOST"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_PORT"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PORT"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_USR"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_USR"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_PWD"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PWD"
+              name: "secret-rabbit"
+        image: "us-central1-docker.pkg.dev/foh-anthos-prod/foh-docker-prd/batchcargajumio:latest"
+        name: "batchcargajumio"
+        ports:
+        - containerPort: 8080
+          protocol: "TCP"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+          requests:
+            cpu: "10m"
+            memory: "10Mi"
+        volumeMounts:
+          - name: nfs-batchcargajumio-pvc
+            mountPath: /JUMIO
+      volumes:
+        - name: nfs-batchcargajumio-pvc
+          persistentVolumeClaim:
+            claimName: nfs-batchcargajumio-pvc
+      imagePullSecrets:
+      - name: "registry-secret"
+      restartPolicy: "Always"

@@ -1,0 +1,8 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "config-batchcargajumio"
+  namespace: "foh"
+data:
+  DS_FUCDPRD_URL: "jdbc:oracle:thin:@10.20.13.17:1521:FUCDPRD "

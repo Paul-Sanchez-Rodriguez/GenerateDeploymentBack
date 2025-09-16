@@ -1,0 +1,71 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    name: "demo"
+  name: "demo"
+  namespace: "foh"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: "demo"
+  template:
+    metadata:
+      labels:
+        name: "demo"
+    spec:
+      containers:
+      - env:
+        - name: "ENV"
+          value: "dev"
+        - name: "PORT"
+          value: "8080"
+        - name: "BASE_LOGS"
+          value: "/logs"
+        - name: "LOG_LEVEL_SERVICE"
+          value: "INFO"
+        - name: "LOG_OUTPUT_SERVICE"
+          value: "AMQP"
+        - name: "RABBITMQ_TRANSACTION_HOST"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_HOST"
+              name: "rabbitmq-cred"
+        - name: "RABBITMQ_TRANSACTION_PORT"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PORT"
+              name: "rabbitmq-cred"
+        - name: "RABBITMQ_TRANSACTION_USR"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_USR"
+              name: "rabbitmq-cred"
+        - name: "RABBITMQ_TRANSACTION_PWD"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PWD"
+              name: "rabbitmq-cred"
+        image: "us-central1-docker.pkg.dev/foh-gke-des/foh-docker-dev/demo:latest"
+        name: "demo"
+        ports:
+        - containerPort: 8080
+          protocol: "TCP"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "900Mi"
+          requests:
+            cpu: "10m"
+            memory: "10Mi"
+        volumeMounts:
+        - mountPath: "/etc/ssl/certs/gkefoh.pfx"
+          name: "secret-volume"
+          subPath: "gkefoh.pfx"
+      volumes:
+      - name: "secret-volume"
+        secret:
+          defaultMode: 420
+          secretName: "gkefinancieraoh-local-secret"

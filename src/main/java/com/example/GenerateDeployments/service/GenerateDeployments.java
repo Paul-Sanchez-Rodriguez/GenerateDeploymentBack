@@ -41,7 +41,7 @@ public class GenerateDeployments {
                 envVars.add(new EnvVar(cm.getNameDeploy(), null,
                         new EnvVarSourceBuilder()
                                 .withConfigMapKeyRef(new ConfigMapKeySelectorBuilder()
-                                        .withName("config-" + cm.getNameConfigMap())
+                                        .withName(cm.getNameConfigMap())
                                         .withKey(cm.getKey())
                                         .build())
                                 .build()));

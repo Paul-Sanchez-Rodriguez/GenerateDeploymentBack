@@ -1,0 +1,65 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: "demo"
+  name: "demo"
+  namespace: "foh"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "demo"
+  template:
+    metadata:
+      labels:
+        app: "demo"
+    spec:
+      containers:
+      - env:
+        - name: "ENV"
+          value: "dev"
+        - name: "PORT"
+          value: "8080"
+        - name: "BASE_LOGS"
+          value: "/logs"
+        - name: "LOG_LEVEL_SERVICE"
+          value: "INFO"
+        - name: "LOG_OUTPUT_SERVICE"
+          value: "AMQP"
+        - name: "RABBITMQ_TRANSACTION_HOST"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_HOST"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_PORT"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PORT"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_USR"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_USR"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_PWD"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PWD"
+              name: "secret-rabbit"
+        image: "us-central1-docker.pkg.dev/foh-anthos-sandbox/foh-docker-dev/demo:latest"
+        name: "demo"
+        ports:
+        - containerPort: 8080
+          protocol: "TCP"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+          requests:
+            cpu: "10m"
+            memory: "10Mi"
+      imagePullSecrets:
+      - name: "registry-secret"
+      restartPolicy: "Always"
