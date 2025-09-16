@@ -1,0 +1,10 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "config-bstransaccionesonline"
+  namespace: "foh"
+data:
+  MSC_TRANSAC: "http://cotransac.foh.svc.cluster.local:8080"
+  MSN_NOTIFICACIONES: "http://bsnotificaciones.foh.svc.cluster.local:8080"
+  MSG_MONITOR: "http://gwmptransactions.foh.svc.cluster.local:8080"

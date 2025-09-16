@@ -1,0 +1,77 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: "bstransaccionesonline"
+  name: "bstransaccionesonline"
+  namespace: "foh"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "bstransaccionesonline"
+  template:
+    metadata:
+      labels:
+        app: "bstransaccionesonline"
+    spec:
+      containers:
+      - env:
+        - name: "ENV"
+          value: "prod"
+        - name: "PORT"
+          value: "8080"
+        - name: "BASE_LOGS"
+          value: "/logs"
+        - name: "LOG_LEVEL_SERVICE"
+          value: "INFO"
+        - name: "LOG_OUTPUT_SERVICE"
+          value: "AMQP"
+        - name: "MSC_TRANSAC"
+          valueFrom:
+            configMapKeyRef:
+              key: "MSC_TRANSAC"
+              name: "config-bstransaccionesonline"
+        - name: "MSN_NOTIFICACIONES"
+          valueFrom:
+            configMapKeyRef:
+              key: "MSN_NOTIFICACIONES"
+              name: "config-bstransaccionesonline"
+        - name: "MSG_MONITOR"
+          valueFrom:
+            configMapKeyRef:
+              key: "MSG_MONITOR"
+              name: "config-bstransaccionesonline"
+        - name: "RABBITMQ_TRANSACTION_HOST"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_HOST"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_PORT"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PORT"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_USR"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_USR"
+              name: "secret-rabbit"
+        - name: "RABBITMQ_TRANSACTION_PWD"
+          valueFrom:
+            secretKeyRef:
+              key: "RABBITMQ_TRANSACTION_PWD"
+              name: "secret-rabbit"
+        image: "us-central1-docker.pkg.dev/foh-anthos-prod/foh-docker-prd/bstransaccionesonline:latest"
+        name: "bstransaccionesonline"
+        ports:
+        - containerPort: 8080
+          protocol: "TCP"
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "10Mi"
+      imagePullSecrets:
+      - name: "registry-secret"
+      restartPolicy: "Always"

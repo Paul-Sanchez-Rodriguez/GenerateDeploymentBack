@@ -77,7 +77,7 @@ public class GenerateDeploymetsGKE {
                 envVars.add(new EnvVar(secret.getNameDeploy(), null,
                         new EnvVarSourceBuilder()
                                 .withSecretKeyRef(new SecretKeySelectorBuilder()
-                                        .withName("secret-" + secret.getNameSecret())
+                                        .withName(secret.getNameSecret())
                                         .withKey(secret.getKey())
                                         .build())
                                 .build()));
@@ -271,7 +271,7 @@ public class GenerateDeploymetsGKE {
                 envVars.add(new EnvVar(secret.getNameDeploy(), null,
                         new EnvVarSourceBuilder()
                                 .withSecretKeyRef(new SecretKeySelectorBuilder()
-                                        .withName("secret-" + secret.getNameSecret())
+                                        .withName(secret.getNameSecret())
                                         .withKey(secret.getKey())
                                         .build())
                                 .build()));
